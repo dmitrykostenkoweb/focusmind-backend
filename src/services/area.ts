@@ -1,14 +1,14 @@
 import { QueryResult, PoolClient } from "pg";
 import pool from "@/db";
-import { RawArea, Area } from "@/models/area";
+import { RawArea } from "@/models/area";
 
 export const getAllAreas = async (): Promise<RawArea[]> => {
   const result: QueryResult<RawArea> = await pool.query("SELECT * FROM Areas");
   return result.rows;
 };
 
-export const getAreaById = async (id: number): Promise<Area> => {
-  const result: QueryResult<Area> = await pool.query(
+export const getAreaById = async (id: number): Promise<RawArea> => {
+  const result: QueryResult<RawArea> = await pool.query(
     "SELECT * FROM Areas WHERE id = $1",
     [id],
   );
@@ -19,11 +19,11 @@ export const createArea = async (
   name: string,
   description?: string,
   imageUrl?: string,
-): Promise<Area> => {
+): Promise<RawArea> => {
   const client: PoolClient = await pool.connect();
   try {
     await client.query("BEGIN");
-    const result: QueryResult<Area> = await client.query(
+    const result: QueryResult<RawArea> = await client.query(
       "INSERT INTO Areas (name, description, image_url) VALUES ($1, $2, $3) RETURNING *",
       [name, description, imageUrl],
     );
@@ -42,11 +42,11 @@ export const updateArea = async (
   name: string,
   description?: string,
   imageUrl?: string,
-): Promise<Area> => {
+): Promise<RawArea> => {
   const client: PoolClient = await pool.connect();
   try {
     await client.query("BEGIN");
-    const result: QueryResult<Area> = await client.query(
+    const result: QueryResult<RawArea> = await client.query(
       "UPDATE Areas SET name = $1, description = $2, image_url = $3 WHERE ID = $4 RETURNING *",
       [name, description, imageUrl, id],
     );
