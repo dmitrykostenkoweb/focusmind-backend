@@ -33,7 +33,7 @@ export const createArea = async (
     return result.rows[0];
   } catch (err) {
     await client.query("ROLLBACK");
-    throw err;
+    throw new Error("Failed to create area");
   } finally {
     client.release();
   }
