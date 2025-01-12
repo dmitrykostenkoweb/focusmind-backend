@@ -6,14 +6,22 @@ import {
   updateArea,
   deleteArea,
 } from "@/services/area";
-import { Area } from "@/models/area";
+import { Area, RawArea } from "@/models/area";
 
 export const getAllAreasController = async (
   req: Request,
   res: Response,
 ): Promise<void> => {
   try {
-    const areas: Area[] = await getAllAreas();
+    const rawAreas: RawArea[] = await getAllAreas();
+
+    const areas: Area[] = rawAreas.map((rawArea) => ({
+      id: rawArea.id,
+      name: rawArea.name,
+      description: rawArea.description,
+      imageUrl: rawArea.image_url,
+    }));
+
     res.json(areas);
   } catch (err) {
     handleDbError(err, res);

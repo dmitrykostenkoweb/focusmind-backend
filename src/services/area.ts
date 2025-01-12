@@ -1,9 +1,9 @@
 import { QueryResult, PoolClient } from "pg";
 import pool from "@/db";
-import { Area } from "@/models/area";
+import { RawArea, Area } from "@/models/area";
 
-export const getAllAreas = async (): Promise<Area[]> => {
-  const result: QueryResult<Area> = await pool.query("SELECT * FROM Areas");
+export const getAllAreas = async (): Promise<RawArea[]> => {
+  const result: QueryResult<RawArea> = await pool.query("SELECT * FROM Areas");
   return result.rows;
 };
 
@@ -14,8 +14,6 @@ export const getAreaById = async (id: number): Promise<Area> => {
   );
   return result.rows[0];
 };
-
-
 
 export const createArea = async (
   name: string,
