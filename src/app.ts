@@ -3,6 +3,7 @@ import express from "express";
 import cors from "cors";
 import { Express } from "express";
 import area from "./routes/area";
+import project from "./routes/project";
 
 const app: Express = express();
 const PORT: string | 3000 = process.env.PORT || 3000;
@@ -10,6 +11,7 @@ const PORT: string | 3000 = process.env.PORT || 3000;
 app.use(cors());
 app.use(express.json());
 app.use(area);
+app.use(project);
 
 app.listen(PORT, (): void => {
   console.log(`Server is running on port ${PORT}`);
