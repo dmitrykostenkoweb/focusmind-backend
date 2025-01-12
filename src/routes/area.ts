@@ -5,7 +5,7 @@ import {
   createAreaController,
   updateAreaController,
   deleteAreaController,
-} from "@/controllers/areaController";
+} from "@/controllers/area";
 
 const router: Router = Router();
 

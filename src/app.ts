@@ -2,7 +2,7 @@ import "module-alias/register";
 import express from "express";
 import cors from "cors";
 import { Express } from "express";
-import areaRoutes from "./routes/areaRoutes";
+import areaRoutes from "./routes/area";
 
 const app: Express = express();
 const PORT: string | 3000 = process.env.PORT || 3000;

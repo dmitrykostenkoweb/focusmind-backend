@@ -5,8 +5,8 @@ import {
   createArea,
   updateArea,
   deleteArea,
-} from "@/services/areaService";
-import { Area } from "@/models/areaModel";
+} from "@/services/area";
+import { Area } from "@/models/area";
 
 export const getAllAreasController = async (
   req: Request,

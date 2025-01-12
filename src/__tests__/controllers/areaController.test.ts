@@ -1,10 +1,10 @@
 import request from "supertest";
 import express from "express";
-import areaRouter from "@/routes/areaRoutes";
-import * as areaService from "@/services/areaService";
-import { Area } from "@/models/areaModel";
+import areaRouter from "@/routes/area";
+import * as areaService from "@/services/area";
+import { Area } from "@/models/area";
 
-jest.mock("@/services/areaService");
+jest.mock("@/services/area");
 
 const app = express();
 app.use(express.json());
