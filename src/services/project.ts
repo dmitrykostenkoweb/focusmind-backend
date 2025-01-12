@@ -1,6 +1,7 @@
 import { QueryResult, PoolClient } from "pg";
 import pool from "@/db";
 import { RawProject } from "@/models/project";
+import { Status } from "@/models/shared";
 
 export const getAllProjects = async (): Promise<RawProject[]> => {
   const result: QueryResult<RawProject> = await pool.query(
@@ -20,6 +21,7 @@ export const getProjectById = async (id: number): Promise<RawProject> => {
 export const createProject = async (
   name: string,
   areaId: number,
+  status: Status,
   description?: string,
   imageUrl?: string,
 ): Promise<RawProject> => {
@@ -27,8 +29,8 @@ export const createProject = async (
   try {
     await client.query("BEGIN");
     const result: QueryResult<RawProject> = await client.query(
-      "INSERT INTO Projects (name, area_id, description, image_url) VALUES ($1, $2, $3) RETURNING *",
-      [name, areaId, description, imageUrl],
+      "INSERT INTO Projects (name, area_id, status, description, image_url) VALUES ($1, $2, $3) RETURNING *",
+      [name, areaId, status, description, imageUrl],
     );
     await client.query("COMMIT");
     return result.rows[0];
@@ -44,6 +46,7 @@ export const updateProject = async (
   id: number,
   name: string,
   areaId: number,
+  status: Status,
   description?: string,
   imageUrl?: string,
 ): Promise<RawProject> => {
@@ -51,8 +54,8 @@ export const updateProject = async (
   try {
     await client.query("BEGIN");
     const result: QueryResult<RawProject> = await client.query(
-      "UPDATE Projects SET name = $1, area_id = $2,  description = $3, image_url = $4 WHERE ID = $4 RETURNING *",
-      [name, areaId, description, imageUrl, id],
+      "UPDATE Projects SET name = $1, area_id = $2, status = $3,   description = $4, image_url = $5 WHERE ID = $6 RETURNING *",
+      [name, areaId, status, description, imageUrl, id],
     );
     await client.query("COMMIT");
     return result.rows[0];

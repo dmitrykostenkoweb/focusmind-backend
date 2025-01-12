@@ -1,12 +1,13 @@
 import { Request, Response } from "express";
 import {
+  createArea,
+  deleteArea,
   getAllAreas,
   getAreaById,
-  createArea,
   updateArea,
-  deleteArea,
 } from "@/services/area";
 import { Area, RawArea } from "@/models/area";
+import { handleDbError } from "@/utils";
 
 export const getAllAreasController = async (
   _: Request,
@@ -15,7 +16,7 @@ export const getAllAreasController = async (
   try {
     const rawAreas: RawArea[] = await getAllAreas();
 
-    const areas: Area[] = rawAreas.map((rawArea) => ({
+    const areas: Area[] = rawAreas.map((rawArea: RawArea) => ({
       id: rawArea.id,
       name: rawArea.name,
       description: rawArea.description,
@@ -34,7 +35,15 @@ export const getAreaByIdController = async (
 ): Promise<void> => {
   const { id } = req.params;
   try {
-    const area: Area = await getAreaById(Number(id));
+    const rawArea: RawArea = await getAreaById(Number(id));
+
+    const area: Area = {
+      id: rawArea.id,
+      name: rawArea.name,
+      description: rawArea.description,
+      imageUrl: rawArea.image_url,
+    };
+
     res.json(area);
   } catch (err) {
     handleDbError(err, res);
@@ -47,7 +56,15 @@ export const createAreaController = async (
 ): Promise<void> => {
   const { name, description, imageUrl } = req.body;
   try {
-    const newArea: Area = await createArea(name, description, imageUrl);
+    const newRawArea: RawArea = await createArea(name, description, imageUrl);
+
+    const newArea: Area = {
+      id: newRawArea.id,
+      name: newRawArea.name,
+      description: newRawArea.description,
+      imageUrl: newRawArea.image_url,
+    };
+
     res.json(newArea);
   } catch (err) {
     handleDbError(err, res);
@@ -61,12 +78,20 @@ export const updateAreaController = async (
   const { id } = req.params;
   const { name, description, imageUrl } = req.body;
   try {
-    const updatedArea: Area = await updateArea(
+    const updatedRawArea: RawArea = await updateArea(
       Number(id),
       name,
       description,
       imageUrl,
     );
+
+    const updatedArea: Area = {
+      id: updatedRawArea.id,
+      name: updatedRawArea.name,
+      description: updatedRawArea.description,
+      imageUrl: updatedRawArea.image_url,
+    };
+
     res.json(updatedArea);
   } catch (err) {
     handleDbError(err, res);
@@ -83,15 +108,5 @@ export const deleteAreaController = async (
     res.json({ message: "Area deleted successfully" });
   } catch (err) {
     handleDbError(err, res);
-  }
-};
-
-const handleDbError = (err: unknown, res: Response): void => {
-  if (err instanceof Error) {
-    console.error(err.message);
-    res.status(500).send("Server error");
-  } else {
-    console.error("Unexpected error", err);
-    res.status(500).send("Unexpected server error");
   }
 };
