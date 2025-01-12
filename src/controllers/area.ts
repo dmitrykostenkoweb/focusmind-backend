@@ -9,7 +9,7 @@ import {
 import { Area, RawArea } from "@/models/area";
 
 export const getAllAreasController = async (
-  req: Request,
+  _: Request,
   res: Response,
 ): Promise<void> => {
   try {

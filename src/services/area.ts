@@ -9,7 +9,7 @@ export const getAllAreas = async (): Promise<RawArea[]> => {
 
 export const getAreaById = async (id: number): Promise<Area> => {
   const result: QueryResult<Area> = await pool.query(
-    "SELECT * FROM Areas WHERE AreaID = $1",
+    "SELECT * FROM Areas WHERE id = $1",
     [id],
   );
   return result.rows[0];
@@ -24,7 +24,7 @@ export const createArea = async (
   try {
     await client.query("BEGIN");
     const result: QueryResult<Area> = await client.query(
-      "INSERT INTO Areas (Name, Description, ImageURL) VALUES ($1, $2, $3) RETURNING *",
+      "INSERT INTO Areas (name, description, image_url) VALUES ($1, $2, $3) RETURNING *",
       [name, description, imageUrl],
     );
     await client.query("COMMIT");
@@ -47,7 +47,7 @@ export const updateArea = async (
   try {
     await client.query("BEGIN");
     const result: QueryResult<Area> = await client.query(
-      "UPDATE Areas SET Name = $1, Description = $2, ImageURL = $3 WHERE AreaID = $4 RETURNING *",
+      "UPDATE Areas SET name = $1, description = $2, image_url = $3 WHERE ID = $4 RETURNING *",
       [name, description, imageUrl, id],
     );
     await client.query("COMMIT");
@@ -64,7 +64,7 @@ export const deleteArea = async (id: number): Promise<void> => {
   const client: PoolClient = await pool.connect();
   try {
     await client.query("BEGIN");
-    await client.query("DELETE FROM Areas WHERE AreaID = $1", [id]);
+    await client.query("DELETE FROM Areas WHERE id = $1", [id]);
     await client.query("COMMIT");
   } catch (err) {
     await client.query("ROLLBACK");

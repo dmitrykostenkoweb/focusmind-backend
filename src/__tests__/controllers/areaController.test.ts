@@ -15,7 +15,7 @@ describe("Area Controller", () => {
     it("should return all areas", async () => {
       const mockAreas: Area[] = [
         {
-          areaId: 1,
+          id: 1,
           name: "Area 1",
           description: "Description 1",
           imageUrl: "ImageUrl 1",
@@ -33,7 +33,7 @@ describe("Area Controller", () => {
   describe("GET /api/areas/:id", () => {
     it("should return a single area by ID", async () => {
       const mockArea: Area = {
-        areaId: 1,
+        id: 1,
         name: "Area 1",
         description: "Description 1",
         imageUrl: "ImageUrl 1",
@@ -58,7 +58,7 @@ describe("Area Controller", () => {
   describe("POST /api/areas", () => {
     it("should create a new area", async () => {
       const newArea: Area = {
-        areaId: 1,
+        id: 1,
         name: "New Area",
         description: "New Description",
         imageUrl: "New ImageUrl",
@@ -79,7 +79,7 @@ describe("Area Controller", () => {
   describe("PUT /api/areas/:id", () => {
     it("should update an existing area", async () => {
       const updatedArea: Area = {
-        areaId: 1,
+        id: 1,
         name: "Updated Area",
         description: "Updated Description",
         imageUrl: "Updated ImageUrl",
@@ -100,7 +100,7 @@ describe("Area Controller", () => {
   describe("DELETE /api/areas/:id", () => {
     it("should delete an area", async () => {
       const updatedArea: Area = {
-        areaId: 1,
+        id: 1,
         name: "Updated Area",
         description: "Updated Description",
         imageUrl: "Updated ImageUrl",
