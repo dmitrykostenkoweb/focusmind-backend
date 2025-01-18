@@ -1,19 +1,19 @@
 import { Status } from "@/models/shared";
 
-export interface RawProject {
+export interface RawTask {
   id: number;
-  name: string;
-  area_id: number;
+  title: string;
   status: Status;
+  project_id: number;
   description?: string;
   image_url?: string;
 }
 
-export interface Project {
+export interface Task {
   id: number;
-  name: string;
-  areaId: number;
+  title: string;
   status: Status;
+  projectId: number;
   description?: string;
   imageUrl?: string;
 }
