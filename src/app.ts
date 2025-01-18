@@ -4,6 +4,7 @@ import cors from "cors";
 import { Express } from "express";
 import area from "./routes/area";
 import project from "./routes/project";
+import task from "./routes/task";
 
 const app: Express = express();
 const PORT: string | 3000 = process.env.PORT || 3000;
@@ -12,6 +13,7 @@ app.use(cors());
 app.use(express.json());
 app.use(area);
 app.use(project);
+app.use(task);
 
 app.listen(PORT, (): void => {
   console.log(`Server is running on port ${PORT}`);

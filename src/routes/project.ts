@@ -1,10 +1,10 @@
 import { Router } from "express";
 import {
-  createProjectController,
-  deleteProjectController,
   getAllProjectsController,
   getProjectByIdController,
+  createProjectController,
   updateProjectController,
+  deleteProjectController,
 } from "@/controllers/project";
 
 const router: Router = Router();

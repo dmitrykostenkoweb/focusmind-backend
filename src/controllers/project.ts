@@ -35,8 +35,9 @@ export const getProjectByIdController = async (
   req: Request,
   res: Response,
 ): Promise<void> => {
-  const { id } = req.params;
   try {
+    const { id } = req.params;
+
     const rawProject: RawProject = await getProjectById(Number(id));
 
     const project: Project = {
@@ -58,15 +59,15 @@ export const createProjectController = async (
   req: Request,
   res: Response,
 ): Promise<void> => {
-  const { name, areaId, description, imageUrl, status } = req.body;
-  const newRawProject: RawProject = await createProject(
-    name,
-    areaId,
-    status,
-    description,
-    imageUrl,
-  );
   try {
+    const { name, areaId, description, imageUrl, status } = req.body;
+    const newRawProject: RawProject = await createProject(
+      name,
+      areaId,
+      status,
+      description,
+      imageUrl,
+    );
     const newProject: Project = {
       id: newRawProject.id,
       name: newRawProject.name,
@@ -86,17 +87,18 @@ export const updateProjectController = async (
   req: Request,
   res: Response,
 ): Promise<void> => {
-  const { id } = req.params;
-  const { name, areaId, description, imageUrl, status } = req.body;
-  const updatedRawProject: RawProject = await updateProject(
-    Number(id),
-    name,
-    areaId,
-    status,
-    description,
-    imageUrl,
-  );
   try {
+    const { id } = req.params;
+    const { name, areaId, description, imageUrl, status } = req.body;
+    const updatedRawProject: RawProject = await updateProject(
+      Number(id),
+      name,
+      areaId,
+      status,
+      description,
+      imageUrl,
+    );
+
     const updatedProject: Project = {
       id: updatedRawProject.id,
       name: updatedRawProject.name,
@@ -116,8 +118,8 @@ export const deleteProjectController = async (
   req: Request,
   res: Response,
 ): Promise<void> => {
-  const { id } = req.params;
   try {
+    const { id } = req.params;
     await deleteProject(Number(id));
     res.json({ message: "Project deleted successfully" });
   } catch (err) {
