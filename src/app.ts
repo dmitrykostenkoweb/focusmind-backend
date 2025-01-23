@@ -2,12 +2,14 @@ import "module-alias/register";
 import express from "express";
 import cors from "cors";
 import { Express } from "express";
+import dotenv from "dotenv";
 import area from "./routes/area";
 import project from "./routes/project";
 import task from "./routes/task";
+dotenv.config();
 
 const app: Express = express();
-const PORT: string | 3000 = process.env.PORT || 3000;
+const PORT: string = process.env.APP_PORT || "3000";
 
 app.use(cors());
 app.use(express.json());
