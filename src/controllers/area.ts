@@ -21,6 +21,7 @@ export const getAllAreasController = async (
       name: rawArea.name,
       description: rawArea.description,
       imageUrl: rawArea.image_url,
+      hex: rawArea.hex,
     }));
 
     res.json(areas);
@@ -42,6 +43,7 @@ export const getAreaByIdController = async (
       name: rawArea.name,
       description: rawArea.description,
       imageUrl: rawArea.image_url,
+      hex: rawArea.hex,
     };
 
     res.json(area);
@@ -54,15 +56,21 @@ export const createAreaController = async (
   req: Request,
   res: Response,
 ): Promise<void> => {
-  const { name, description, imageUrl } = req.body;
+  const { name, description, imageUrl, hex } = req.body;
   try {
-    const newRawArea: RawArea = await createArea(name, description, imageUrl);
+    const newRawArea: RawArea = await createArea(
+      name,
+      description,
+      imageUrl,
+      hex,
+    );
 
     const newArea: Area = {
       id: newRawArea.id,
       name: newRawArea.name,
       description: newRawArea.description,
       imageUrl: newRawArea.image_url,
+      hex: newRawArea.hex,
     };
 
     res.json(newArea);
@@ -76,13 +84,14 @@ export const updateAreaController = async (
   res: Response,
 ): Promise<void> => {
   const { id } = req.params;
-  const { name, description, imageUrl } = req.body;
+  const { name, description, imageUrl, hex } = req.body;
   try {
     const updatedRawArea: RawArea = await updateArea(
       Number(id),
       name,
       description,
       imageUrl,
+      hex,
     );
 
     const updatedArea: Area = {
@@ -90,6 +99,7 @@ export const updateAreaController = async (
       name: updatedRawArea.name,
       description: updatedRawArea.description,
       imageUrl: updatedRawArea.image_url,
+      hex: updatedRawArea.hex,
     };
 
     res.json(updatedArea);

@@ -19,13 +19,14 @@ export const createArea = async (
   name: string,
   description?: string,
   imageUrl?: string,
+  hex?: string,
 ): Promise<RawArea> => {
   const client: PoolClient = await pool.connect();
   try {
     await client.query("BEGIN");
     const result: QueryResult<RawArea> = await client.query(
-      "INSERT INTO Areas (name, description, image_url) VALUES ($1, $2, $3) RETURNING *",
-      [name, description, imageUrl],
+      "INSERT INTO Areas (name, description, image_url, hex) VALUES ($1, $2, $3, $4) RETURNING *",
+      [name, description, imageUrl, hex],
     );
     await client.query("COMMIT");
     return result.rows[0];
@@ -42,13 +43,14 @@ export const updateArea = async (
   name: string,
   description?: string,
   imageUrl?: string,
+  hex?: string,
 ): Promise<RawArea> => {
   const client: PoolClient = await pool.connect();
   try {
     await client.query("BEGIN");
     const result: QueryResult<RawArea> = await client.query(
-      "UPDATE Areas SET name = $1, description = $2, image_url = $3 WHERE ID = $4 RETURNING *",
-      [name, description, imageUrl, id],
+      "UPDATE Areas SET name = $1, description = $2, image_url = $3, hex = $4 WHERE ID = $5 RETURNING *",
+      [name, description, imageUrl, hex, id],
     );
     await client.query("COMMIT");
     return result.rows[0];

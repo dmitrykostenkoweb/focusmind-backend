@@ -3,6 +3,7 @@ export interface RawArea {
   name: string;
   description?: string;
   image_url?: string;
+  hex?: string;
 }
 
 export interface Area {
@@ -10,4 +11,5 @@ export interface Area {
   name: string;
   description?: string;
   imageUrl?: string;
+  hex?: string;
 }
