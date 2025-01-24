@@ -17,10 +17,10 @@
     "dotenv": "^16.4.7",
     "express": "^4.21.2",
     "module-alias": "^2.2.3",
-    "ngrok": "^5.0.0-beta.2",
     "prettier": "^3.4.2",
     "reflect-metadata": "^0.2.2",
     "supertest": "^7.0.0",
+    "telegraf": "^4.16.3",
     "ts-node-dev": "^2.0.0",
     "typeorm": "^0.3.20"
   },

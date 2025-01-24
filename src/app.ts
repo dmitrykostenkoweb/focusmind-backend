@@ -1,13 +1,18 @@
 import "module-alias/register";
 import express from "express";
-import cors from "cors";
 import { Express } from "express";
+
+import cors from "cors";
 import dotenv from "dotenv";
+//routes
 import area from "./routes/area";
 import project from "./routes/project";
 import task from "./routes/task";
 import telegram from "./routes/telegram";
-import { setTelegramWebhook, startNgrok } from "@/services/ngrok";
+//bot
+import bot from "./bot/bot";
+//services
+import setTelegramWebhook from "@/services/telegram";
 
 dotenv.config();
 
@@ -19,10 +24,11 @@ app.use(express.json());
 app.use(area);
 app.use(project);
 app.use(task);
+app.use(telegram);
 
 app.listen(PORT, async () => {
   console.log(`Server is running on port ${PORT}`);
 
-  await startNgrok();
   await setTelegramWebhook();
+  await bot.launch();
 });

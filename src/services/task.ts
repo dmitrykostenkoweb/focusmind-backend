@@ -151,3 +151,4 @@ export const deleteTaskService = async (id: number): Promise<boolean> => {
     await queryRunner.release();
   }
 };
+//todo completeTask service
