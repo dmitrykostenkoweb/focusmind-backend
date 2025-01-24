@@ -1,9 +1,9 @@
 import { Request, Response } from "express";
 import {
-  createArea,
-  deleteArea,
   getAllAreasService,
   getAreaByIdService,
+  createAreaService,
+  deleteArea,
   updateArea,
 } from "@/services/area";
 import { Area } from "@/models/area";
@@ -60,7 +60,7 @@ export const createAreaController = async (
     return;
   }
   try {
-    const newArea = await createArea(name, description, imageUrl, hex);
+    const newArea = await createAreaService(name, description, imageUrl, hex);
     res.status(201).json(newArea);
   } catch (error: unknown) {
     let errorMessage = "Internal server error.";

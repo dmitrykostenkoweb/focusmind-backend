@@ -18,13 +18,13 @@ export const getAreaByIdService = async (
   id: number,
 ): Promise<AreaEntity | null> => {
   try {
-    return await areaRepository.findOneBy({ id }); // TypeORM obsłuży zapytanie
+    return await areaRepository.findOneBy({ id });
   } catch (error: unknown) {
     throw new Error("Failed to fetch area by ID.");
   }
 };
 
-export const createArea = async (
+export const createAreaService = async (
   name: string,
   description?: string,
   imageUrl?: string,
