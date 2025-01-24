@@ -6,7 +6,7 @@ import {
   getAreaById,
   updateArea,
 } from "@/services/area";
-import { Area, RawArea } from "@/models/area";
+import { Area } from "@/models/area";
 import { handleDbError } from "@/utils";
 
 export const getAllAreasController = async (
@@ -14,13 +14,13 @@ export const getAllAreasController = async (
   res: Response,
 ): Promise<void> => {
   try {
-    const rawAreas: RawArea[] = await getAllAreas();
+    const rawAreas: Area[] = await getAllAreas();
 
-    const areas: Area[] = rawAreas.map((rawArea: RawArea) => ({
+    const areas: Area[] = rawAreas.map((rawArea: Area) => ({
       id: rawArea.id,
       name: rawArea.name,
       description: rawArea.description,
-      imageUrl: rawArea.image_url,
+      imageUrl: rawArea.imageUrl,
       hex: rawArea.hex,
     }));
 
@@ -36,13 +36,13 @@ export const getAreaByIdController = async (
 ): Promise<void> => {
   const { id } = req.params;
   try {
-    const rawArea: RawArea = await getAreaById(Number(id));
+    const rawArea: Area = await getAreaById(Number(id));
 
     const area: Area = {
       id: rawArea.id,
       name: rawArea.name,
       description: rawArea.description,
-      imageUrl: rawArea.image_url,
+      imageUrl: rawArea.imageUrl,
       hex: rawArea.hex,
     };
 
@@ -57,25 +57,20 @@ export const createAreaController = async (
   res: Response,
 ): Promise<void> => {
   const { name, description, imageUrl, hex } = req.body;
+
+  if (!name) {
+    res.status(400).json({ error: "Name is required." });
+    return;
+  }
   try {
-    const newRawArea: RawArea = await createArea(
-      name,
-      description,
-      imageUrl,
-      hex,
-    );
-
-    const newArea: Area = {
-      id: newRawArea.id,
-      name: newRawArea.name,
-      description: newRawArea.description,
-      imageUrl: newRawArea.image_url,
-      hex: newRawArea.hex,
-    };
-
-    res.json(newArea);
-  } catch (err) {
-    handleDbError(err, res);
+    const newArea = await createArea(name, description, imageUrl, hex);
+    res.status(201).json(newArea);
+  } catch (error: unknown) {
+    let errorMessage = "Internal server error.";
+    if (error instanceof Error) {
+      errorMessage = error.message;
+    }
+    res.status(500).json({ error: errorMessage });
   }
 };
 
@@ -86,7 +81,7 @@ export const updateAreaController = async (
   const { id } = req.params;
   const { name, description, imageUrl, hex } = req.body;
   try {
-    const updatedRawArea: RawArea = await updateArea(
+    const updatedArea: Area = await updateArea(
       Number(id),
       name,
       description,
@@ -94,13 +89,13 @@ export const updateAreaController = async (
       hex,
     );
 
-    const updatedArea: Area = {
-      id: updatedRawArea.id,
-      name: updatedRawArea.name,
-      description: updatedRawArea.description,
-      imageUrl: updatedRawArea.image_url,
-      hex: updatedRawArea.hex,
-    };
+    // const updatedArea: Area = {
+    //   id: updatedArea.id,
+    //   name: updatedArea.name,
+    //   description: updatedArea.description,
+    //   imageUrl: updatedArea.imageUrl,
+    //   hex: updatedArea.hex,
+    // };
 
     res.json(updatedArea);
   } catch (err) {

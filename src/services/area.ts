@@ -1,18 +1,18 @@
 import { QueryResult, PoolClient } from "pg";
 import pool from "@/db";
-import { RawArea } from "@/models/area";
+import { Area } from "@/models/area";
 import { AppDataSource } from "@/config/data-source";
-import { Area } from "@/entities/area";
+import { AreaEntity } from "@/entities/area";
 
-const areaRepository = AppDataSource.getRepository(Area);
+const areaRepository = AppDataSource.getRepository(AreaEntity);
 
-export const getAllAreas = async (): Promise<RawArea[]> => {
-  const result: QueryResult<RawArea> = await pool.query("SELECT * FROM Areas");
+export const getAllAreas = async (): Promise<Area[]> => {
+  const result: QueryResult<Area> = await pool.query("SELECT * FROM Areas");
   return result.rows;
 };
 
-export const getAreaById = async (id: number): Promise<RawArea> => {
-  const result: QueryResult<RawArea> = await pool.query(
+export const getAreaById = async (id: number): Promise<Area> => {
+  const result: QueryResult<Area> = await pool.query(
     "SELECT * FROM Areas WHERE id = $1",
     [id],
   );
@@ -24,9 +24,19 @@ export const createArea = async (
   description?: string,
   imageUrl?: string,
   hex?: string,
-): Promise<RawArea> => {
-  const area = areaRepository.create({ name, description, imageUrl, hex });
-  return await areaRepository.save(area);
+): Promise<AreaEntity> => {
+  try {
+    const area = areaRepository.create({ name, description, imageUrl, hex });
+    return await areaRepository.save(area);
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      if ("code" in error && (error as any).code === "23505") {
+        throw new Error("Area with this name already exists.");
+      }
+      throw new Error(`Database error: ${error.message}`);
+    }
+    throw new Error("An unknown error occurred while creating the area.");
+  }
 };
 
 export const updateArea = async (
@@ -35,11 +45,11 @@ export const updateArea = async (
   description?: string,
   imageUrl?: string,
   hex?: string,
-): Promise<RawArea> => {
+): Promise<Area> => {
   const client: PoolClient = await pool.connect();
   try {
     await client.query("BEGIN");
-    const result: QueryResult<RawArea> = await client.query(
+    const result: QueryResult<Area> = await client.query(
       "UPDATE Areas SET name = $1, description = $2, image_url = $3, hex = $4 WHERE ID = $5 RETURNING *",
       [name, description, imageUrl, hex, id],
     );

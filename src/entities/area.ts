@@ -2,7 +2,7 @@ import "reflect-metadata";
 import { Entity, PrimaryGeneratedColumn, Column } from "typeorm";
 
 @Entity({ name: "areas" })
-export class Area {
+export class AreaEntity {
   @PrimaryGeneratedColumn()
   id!: number;
 
