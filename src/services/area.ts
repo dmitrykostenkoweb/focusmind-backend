@@ -1,7 +1,9 @@
 import { AppDataSource } from "@/config/data-source";
 import { AreaEntity } from "@/entities/area";
+import { Repository } from "typeorm";
 
-const areaRepository = AppDataSource.getRepository(AreaEntity);
+const areaRepository: Repository<AreaEntity> =
+  AppDataSource.getRepository(AreaEntity);
 
 export const getAllAreasService = async (): Promise<AreaEntity[]> => {
   try {

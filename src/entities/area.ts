@@ -1,5 +1,6 @@
 import "reflect-metadata";
-import { Entity, PrimaryGeneratedColumn, Column } from "typeorm";
+import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from "typeorm";
+import { ProjectEntity } from "./project";
 
 @Entity({ name: "areas" })
 export class AreaEntity {
@@ -17,4 +18,7 @@ export class AreaEntity {
 
   @Column({ type: "text", nullable: true })
   hex?: string;
+
+  @OneToMany(() => ProjectEntity, (project) => project.area)
+  projects!: ProjectEntity[];
 }
