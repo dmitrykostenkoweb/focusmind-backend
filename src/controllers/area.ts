@@ -6,8 +6,6 @@ import {
   updateAreaService,
   deleteAreaService,
 } from "@/services/area";
-import { Area } from "@/models/area";
-import { handleDbError } from "@/utils";
 
 export const getAllAreasController = async (
   _: Request,
