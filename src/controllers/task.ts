@@ -46,7 +46,6 @@ export const createTaskController = async (
     const {
       name,
       projectId,
-      areaId,
       status,
       description,
       startDate,
@@ -54,17 +53,14 @@ export const createTaskController = async (
       imageUrl,
     } = req.body;
 
-    if (!name || !projectId || !areaId) {
-      res
-        .status(400)
-        .json({ error: "Name, projectId, and areaId are required." });
+    if (!name || !projectId) {
+      res.status(400).json({ error: "Name and projectId are required." });
       return;
     }
 
     const newTask = await createTaskService(
       name,
       projectId,
-      areaId,
       status,
       description,
       startDate,
@@ -90,14 +86,11 @@ export const updateTaskController = async (
       startDate,
       endDate,
       projectId,
-      areaId,
       imageUrl,
     } = req.body;
 
-    if (!name || !projectId || !areaId) {
-      res
-        .status(400)
-        .json({ error: "Name, projectId, and areaId are required." });
+    if (!name || !projectId) {
+      res.status(400).json({ error: "Name and projectId are required." });
       return;
     }
 
@@ -105,7 +98,6 @@ export const updateTaskController = async (
       Number(id),
       name,
       projectId,
-      areaId,
       status,
       description,
       startDate,

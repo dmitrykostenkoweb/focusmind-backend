@@ -19,7 +19,6 @@ export const getAllTasksService = async (): Promise<TaskEntity[]> => {
         "startDate",
         "endDate",
         "projectId",
-        "areaId",
         "imageUrl",
       ],
     });
@@ -41,7 +40,6 @@ export const getTaskByIdService = async (
 export const createTaskService = async (
   name: string,
   projectId: number,
-  areaId: number,
   status: Status = Status.Inbox,
   description?: string,
   startDate?: Date,
@@ -56,18 +54,14 @@ export const createTaskService = async (
     const project = await queryRunner.manager.findOneBy(ProjectEntity, {
       id: projectId,
     });
-    const area = await queryRunner.manager.findOneBy(AreaEntity, {
-      id: areaId,
-    });
 
-    if (!project || !area) {
-      throw new Error("Project or Area not found.");
+    if (!project) {
+      throw new Error("Project not found.");
     }
 
     const task = queryRunner.manager.create(TaskEntity, {
       name,
       projectId,
-      areaId,
       status,
       description,
       startDate,
@@ -90,7 +84,6 @@ export const updateTaskService = async (
   id: number,
   name: string,
   projectId: number,
-  areaId: number,
   status?: Status,
   description?: string,
   startDate?: Date,
@@ -110,7 +103,6 @@ export const updateTaskService = async (
 
     task.name = name;
     task.projectId = projectId;
-    task.areaId = areaId;
     task.status = status || task.status;
     task.description = description;
     task.startDate = startDate;

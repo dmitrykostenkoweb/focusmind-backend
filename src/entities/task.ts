@@ -1,6 +1,5 @@
 import { Entity, PrimaryGeneratedColumn, Column, ManyToOne } from "typeorm";
 import { ProjectEntity } from "./project";
-import { AreaEntity } from "./area";
 import { Status } from "@/models/shared";
 
 @Entity({ name: "tasks" })
@@ -28,12 +27,6 @@ export class TaskEntity {
 
   @ManyToOne(() => ProjectEntity, { onDelete: "CASCADE" })
   project!: ProjectEntity;
-
-  @Column()
-  areaId!: number;
-
-  @ManyToOne(() => AreaEntity, { onDelete: "CASCADE" })
-  area!: AreaEntity;
 
   @Column({ type: "varchar", length: 255, nullable: true })
   imageUrl?: string;
