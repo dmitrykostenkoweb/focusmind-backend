@@ -1,33 +1,21 @@
 import { Request, Response } from "express";
 import {
-  createProject,
-  deleteProject,
-  getAllProjects,
-  getProjectById,
-  updateProject,
+  getAllProjectsService,
+  getProjectByIdService,
+  createProjectService,
+  updateProjectService,
+  deleteProjectService,
 } from "@/services/project";
-import { Project, RawProject } from "@/models/project";
-import { handleDbError } from "@/utils";
 
 export const getAllProjectsController = async (
   _: Request,
   res: Response,
 ): Promise<void> => {
   try {
-    const rawProjects: RawProject[] = await getAllProjects();
-
-    const projects: Project[] = rawProjects.map((rawProject: RawProject) => ({
-      id: rawProject.id,
-      name: rawProject.name,
-      areaId: rawProject.area_id,
-      status: rawProject.status,
-      description: rawProject.description,
-      imageUrl: rawProject.image_url,
-    }));
-
+    const projects = await getAllProjectsService();
     res.json(projects);
-  } catch (err) {
-    handleDbError(err, res);
+  } catch (error: unknown) {
+    res.status(500).json({ error: "Internal server error." });
   }
 };
 
@@ -37,21 +25,16 @@ export const getProjectByIdController = async (
 ): Promise<void> => {
   try {
     const { id } = req.params;
+    const project = await getProjectByIdService(Number(id));
 
-    const rawProject: RawProject = await getProjectById(Number(id));
-
-    const project: Project = {
-      id: rawProject.id,
-      name: rawProject.name,
-      areaId: rawProject.area_id,
-      status: rawProject.status,
-      description: rawProject.description,
-      imageUrl: rawProject.image_url,
-    };
+    if (!project) {
+      res.status(404).json({ error: "Project not found." });
+      return;
+    }
 
     res.json(project);
-  } catch (err) {
-    handleDbError(err, res);
+  } catch (error: unknown) {
+    res.status(500).json({ error: "Internal server error." });
   }
 };
 
@@ -60,26 +43,23 @@ export const createProjectController = async (
   res: Response,
 ): Promise<void> => {
   try {
-    const { name, areaId, description, imageUrl, status } = req.body;
-    const newRawProject: RawProject = await createProject(
+    const { name, areaId, status, description, imageUrl } = req.body;
+
+    if (!name || !areaId || !status) {
+      res.status(400).json({ error: "Name, areaId, and status are required." });
+      return;
+    }
+
+    const newProject = await createProjectService(
       name,
       areaId,
       status,
       description,
       imageUrl,
     );
-    const newProject: Project = {
-      id: newRawProject.id,
-      name: newRawProject.name,
-      areaId: newRawProject.area_id,
-      status: newRawProject.status,
-      description: newRawProject.description,
-      imageUrl: newRawProject.image_url,
-    };
-
-    res.json(newProject);
-  } catch (err) {
-    handleDbError(err, res);
+    res.status(201).json(newProject);
+  } catch (error: unknown) {
+    res.status(500).json({ error: "Internal server error." });
   }
 };
 
@@ -89,8 +69,14 @@ export const updateProjectController = async (
 ): Promise<void> => {
   try {
     const { id } = req.params;
-    const { name, areaId, description, imageUrl, status } = req.body;
-    const updatedRawProject: RawProject = await updateProject(
+    const { name, areaId, status, description, imageUrl } = req.body;
+
+    if (!name || !areaId || !status) {
+      res.status(400).json({ error: "Name, areaId, and status are required." });
+      return;
+    }
+
+    const updatedProject = await updateProjectService(
       Number(id),
       name,
       areaId,
@@ -98,19 +84,9 @@ export const updateProjectController = async (
       description,
       imageUrl,
     );
-
-    const updatedProject: Project = {
-      id: updatedRawProject.id,
-      name: updatedRawProject.name,
-      areaId: updatedRawProject.area_id,
-      status: updatedRawProject.status,
-      description: updatedRawProject.description,
-      imageUrl: updatedRawProject.image_url,
-    };
-
     res.json(updatedProject);
-  } catch (err) {
-    handleDbError(err, res);
+  } catch (error: unknown) {
+    res.status(500).json({ error: "Internal server error." });
   }
 };
 
@@ -120,9 +96,9 @@ export const deleteProjectController = async (
 ): Promise<void> => {
   try {
     const { id } = req.params;
-    await deleteProject(Number(id));
+    await deleteProjectService(Number(id));
     res.json({ message: "Project deleted successfully" });
-  } catch (err) {
-    handleDbError(err, res);
+  } catch (error: unknown) {
+    res.status(500).json({ error: "Internal server error." });
   }
 };
