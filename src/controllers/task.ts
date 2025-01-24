@@ -1,12 +1,10 @@
 import { Request, Response } from "express";
-import { handleDbError } from "@/utils";
-import { RawTask } from "@/models/task";
 import {
-  createTask,
-  deleteTask,
-  getAllTasks,
-  getTaskById,
-  updateTask,
+  getAllTasksService,
+  getTaskByIdService,
+  createTaskService,
+  updateTaskService,
+  deleteTaskService,
 } from "@/services/task";
 
 export const getAllTasksController = async (
@@ -14,23 +12,10 @@ export const getAllTasksController = async (
   res: Response,
 ): Promise<void> => {
   try {
-    const rawTasks: RawTask[] = await getAllTasks();
-
-    const tasks = rawTasks.map((rawTask: RawTask) => ({
-      id: rawTask.id,
-      name: rawTask.name,
-      description: rawTask.description,
-      status: rawTask.status,
-      startDate: rawTask.start_date,
-      endDate: rawTask.end_date,
-      projectId: rawTask.project_id,
-      areaId: rawTask.area_id,
-      imageUrl: rawTask.image_url,
-    }));
-
+    const tasks = await getAllTasksService();
     res.json(tasks);
-  } catch (err) {
-    handleDbError(err, res);
+  } catch (error: unknown) {
+    res.status(500).json({ error: "Internal server error." });
   }
 };
 
@@ -40,24 +25,16 @@ export const getTaskByIdController = async (
 ): Promise<void> => {
   try {
     const { id } = req.params;
+    const task = await getTaskByIdService(Number(id));
 
-    const rawTask: RawTask = await getTaskById(Number(id));
-
-    const task = {
-      id: rawTask.id,
-      name: rawTask.name,
-      description: rawTask.description,
-      status: rawTask.status,
-      startDate: rawTask.start_date,
-      endDate: rawTask.end_date,
-      projectId: rawTask.project_id,
-      areaId: rawTask.area_id,
-      imageUrl: rawTask.image_url,
-    };
+    if (!task) {
+      res.status(404).json({ error: "Task not found." });
+      return;
+    }
 
     res.json(task);
-  } catch (err) {
-    handleDbError(err, res);
+  } catch (error: unknown) {
+    res.status(500).json({ error: "Internal server error." });
   }
 };
 
@@ -68,41 +45,35 @@ export const createTaskController = async (
   try {
     const {
       name,
-      description,
-      status,
-      startDate,
-      endDate,
       projectId,
       areaId,
+      status,
+      description,
+      startDate,
+      endDate,
       imageUrl,
     } = req.body;
 
-    const rawTask: RawTask = await createTask(
+    if (!name || !projectId || !areaId) {
+      res
+        .status(400)
+        .json({ error: "Name, projectId, and areaId are required." });
+      return;
+    }
+
+    const newTask = await createTaskService(
       name,
-      description,
-      status,
-      startDate,
-      endDate,
       projectId,
       areaId,
+      status,
+      description,
+      startDate,
+      endDate,
       imageUrl,
     );
-
-    const task = {
-      id: rawTask.id,
-      name: rawTask.name,
-      description: rawTask.description,
-      status: rawTask.status,
-      startDate: rawTask.start_date,
-      endDate: rawTask.end_date,
-      projectId: rawTask.project_id,
-      areaId: rawTask.area_id,
-      imageUrl: rawTask.image_url,
-    };
-
-    res.json(task);
-  } catch (err) {
-    handleDbError(err, res);
+    res.status(201).json(newTask);
+  } catch (error: unknown) {
+    res.status(500).json({ error: "Internal server error." });
   }
 };
 
@@ -112,7 +83,6 @@ export const updateTaskController = async (
 ): Promise<void> => {
   try {
     const { id } = req.params;
-
     const {
       name,
       description,
@@ -124,33 +94,33 @@ export const updateTaskController = async (
       imageUrl,
     } = req.body;
 
-    const rawTask: RawTask = await updateTask(
+    if (!name || !projectId || !areaId) {
+      res
+        .status(400)
+        .json({ error: "Name, projectId, and areaId are required." });
+      return;
+    }
+
+    const updatedTask = await updateTaskService(
       Number(id),
       name,
-      description,
-      status,
-      startDate,
-      endDate,
       projectId,
       areaId,
+      status,
+      description,
+      startDate,
+      endDate,
       imageUrl,
     );
 
-    const task = {
-      id: rawTask.id,
-      name: rawTask.name,
-      description: rawTask.description,
-      status: rawTask.status,
-      startDate: rawTask.start_date,
-      endDate: rawTask.end_date,
-      projectId: rawTask.project_id,
-      areaId: rawTask.area_id,
-      imageUrl: rawTask.image_url,
-    };
+    if (!updatedTask) {
+      res.status(404).json({ error: "Task not found." });
+      return;
+    }
 
-    res.json(task);
-  } catch (err) {
-    handleDbError(err, res);
+    res.json(updatedTask);
+  } catch (error: unknown) {
+    res.status(500).json({ error: "Internal server error." });
   }
 };
 
@@ -161,9 +131,15 @@ export const deleteTaskController = async (
   try {
     const { id } = req.params;
 
-    await deleteTask(Number(id));
+    const deletedTask = await deleteTaskService(Number(id));
+
+    if (!deletedTask) {
+      res.status(404).json({ error: "Task not found." });
+      return;
+    }
+
     res.json({ message: "Task deleted successfully" });
-  } catch (err) {
-    handleDbError(err, res);
+  } catch (error: unknown) {
+    res.status(500).json({ error: "Internal server error." });
   }
 };

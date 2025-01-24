@@ -1,5 +1,12 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne } from "typeorm";
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  ManyToOne,
+  OneToMany,
+} from "typeorm";
 import { AreaEntity } from "./area";
+import { TaskEntity } from "./task";
 import { Status } from "@/models/shared";
 
 @Entity({ name: "projects" })
@@ -13,7 +20,7 @@ export class ProjectEntity {
   @Column()
   areaId!: number;
 
-  @ManyToOne(() => AreaEntity, { onDelete: "CASCADE" })
+  @ManyToOne(() => AreaEntity, (area) => area.projects, { onDelete: "CASCADE" })
   area!: AreaEntity;
 
   @Column({ type: "enum", enum: Status })
@@ -24,4 +31,7 @@ export class ProjectEntity {
 
   @Column({ type: "varchar", length: 255, nullable: true })
   imageUrl?: string;
+
+  @OneToMany(() => TaskEntity, (task) => task.project)
+  tasks!: TaskEntity[];
 }

@@ -1,6 +1,7 @@
 import "reflect-metadata";
 import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from "typeorm";
 import { ProjectEntity } from "./project";
+import { TaskEntity } from "./task";
 
 @Entity({ name: "areas" })
 export class AreaEntity {
@@ -21,4 +22,7 @@ export class AreaEntity {
 
   @OneToMany(() => ProjectEntity, (project) => project.area)
   projects!: ProjectEntity[];
+
+  @OneToMany(() => TaskEntity, (task) => task.area)
+  tasks!: TaskEntity[];
 }
