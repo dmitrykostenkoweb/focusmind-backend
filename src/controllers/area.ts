@@ -3,7 +3,7 @@ import {
   createArea,
   deleteArea,
   getAllAreasService,
-  getAreaById,
+  getAreaByIdService,
   updateArea,
 } from "@/services/area";
 import { Area } from "@/models/area";
@@ -30,20 +30,22 @@ export const getAreaByIdController = async (
   res: Response,
 ): Promise<void> => {
   const { id } = req.params;
-  try {
-    const rawArea: Area = await getAreaById(Number(id));
 
-    const area: Area = {
-      id: rawArea.id,
-      name: rawArea.name,
-      description: rawArea.description,
-      imageUrl: rawArea.imageUrl,
-      hex: rawArea.hex,
-    };
+  try {
+    const area = await getAreaByIdService(Number(id));
+
+    if (!area) {
+      res.status(404).json({ error: "Area not found." });
+      return;
+    }
 
     res.json(area);
-  } catch (err) {
-    handleDbError(err, res);
+  } catch (error: unknown) {
+    let errorMessage = "Internal server error.";
+    if (error instanceof Error) {
+      errorMessage = error.message;
+    }
+    res.status(500).json({ error: errorMessage });
   }
 };
 

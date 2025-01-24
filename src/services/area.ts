@@ -14,12 +14,14 @@ export const getAllAreasService = async (): Promise<AreaEntity[]> => {
   }
 };
 
-export const getAreaById = async (id: number): Promise<Area> => {
-  const result: QueryResult<Area> = await pool.query(
-    "SELECT * FROM Areas WHERE id = $1",
-    [id],
-  );
-  return result.rows[0];
+export const getAreaByIdService = async (
+  id: number,
+): Promise<AreaEntity | null> => {
+  try {
+    return await areaRepository.findOneBy({ id }); // TypeORM obsłuży zapytanie
+  } catch (error: unknown) {
+    throw new Error("Failed to fetch area by ID.");
+  }
 };
 
 export const createArea = async (
