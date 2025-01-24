@@ -6,9 +6,12 @@ import { AreaEntity } from "@/entities/area";
 
 const areaRepository = AppDataSource.getRepository(AreaEntity);
 
-export const getAllAreas = async (): Promise<Area[]> => {
-  const result: QueryResult<Area> = await pool.query("SELECT * FROM Areas");
-  return result.rows;
+export const getAllAreasService = async (): Promise<AreaEntity[]> => {
+  try {
+    return await areaRepository.find();
+  } catch (error: unknown) {
+    throw new Error("Failed to fetch areas.");
+  }
 };
 
 export const getAreaById = async (id: number): Promise<Area> => {

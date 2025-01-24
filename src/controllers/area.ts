@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import {
   createArea,
   deleteArea,
-  getAllAreas,
+  getAllAreasService,
   getAreaById,
   updateArea,
 } from "@/services/area";
@@ -14,19 +14,14 @@ export const getAllAreasController = async (
   res: Response,
 ): Promise<void> => {
   try {
-    const rawAreas: Area[] = await getAllAreas();
-
-    const areas: Area[] = rawAreas.map((rawArea: Area) => ({
-      id: rawArea.id,
-      name: rawArea.name,
-      description: rawArea.description,
-      imageUrl: rawArea.imageUrl,
-      hex: rawArea.hex,
-    }));
-
+    const areas = await getAllAreasService();
     res.json(areas);
-  } catch (err) {
-    handleDbError(err, res);
+  } catch (error: unknown) {
+    let errorMessage = "Internal server error.";
+    if (error instanceof Error) {
+      errorMessage = error.message;
+    }
+    res.status(500).json({ error: errorMessage });
   }
 };
 
