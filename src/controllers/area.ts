@@ -4,7 +4,7 @@ import {
   getAreaByIdService,
   createAreaService,
   updateAreaService,
-  deleteArea,
+  deleteAreaService,
 } from "@/services/area";
 import { Area } from "@/models/area";
 import { handleDbError } from "@/utils";
@@ -106,10 +106,15 @@ export const deleteAreaController = async (
   res: Response,
 ): Promise<void> => {
   const { id } = req.params;
+
   try {
-    await deleteArea(Number(id));
+    await deleteAreaService(Number(id));
     res.json({ message: "Area deleted successfully" });
-  } catch (err) {
-    handleDbError(err, res);
+  } catch (error: unknown) {
+    let errorMessage = "Internal server error.";
+    if (error instanceof Error) {
+      errorMessage = error.message;
+    }
+    res.status(500).json({ error: errorMessage });
   }
 };

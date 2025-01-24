@@ -1,6 +1,3 @@
-import { QueryResult, PoolClient } from "pg";
-import pool from "@/db";
-import { Area } from "@/models/area";
 import { AppDataSource } from "@/config/data-source";
 import { AreaEntity } from "@/entities/area";
 
@@ -79,16 +76,24 @@ export const updateAreaService = async (
   }
 };
 
-export const deleteArea = async (id: number): Promise<void> => {
-  const client: PoolClient = await pool.connect();
+export const deleteAreaService = async (id: number): Promise<void> => {
+  const queryRunner = AppDataSource.createQueryRunner();
+  await queryRunner.connect();
+  await queryRunner.startTransaction();
+
   try {
-    await client.query("BEGIN");
-    await client.query("DELETE FROM Areas WHERE id = $1", [id]);
-    await client.query("COMMIT");
-  } catch (err) {
-    await client.query("ROLLBACK");
-    throw err;
+    const area = await queryRunner.manager.findOneBy(AreaEntity, { id });
+
+    if (!area) {
+      throw new Error("Area not found.");
+    }
+
+    await queryRunner.manager.remove(area);
+    await queryRunner.commitTransaction();
+  } catch (error) {
+    await queryRunner.rollbackTransaction();
+    throw new Error("Failed to delete area.");
   } finally {
-    client.release();
+    await queryRunner.release();
   }
 };
