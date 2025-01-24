@@ -1,6 +1,10 @@
 import { QueryResult, PoolClient } from "pg";
 import pool from "@/db";
 import { RawArea } from "@/models/area";
+import { AppDataSource } from "@/config/data-source";
+import { Area } from "@/entities/area";
+
+const areaRepository = AppDataSource.getRepository(Area);
 
 export const getAllAreas = async (): Promise<RawArea[]> => {
   const result: QueryResult<RawArea> = await pool.query("SELECT * FROM Areas");
@@ -21,21 +25,8 @@ export const createArea = async (
   imageUrl?: string,
   hex?: string,
 ): Promise<RawArea> => {
-  const client: PoolClient = await pool.connect();
-  try {
-    await client.query("BEGIN");
-    const result: QueryResult<RawArea> = await client.query(
-      "INSERT INTO Areas (name, description, image_url, hex) VALUES ($1, $2, $3, $4) RETURNING *",
-      [name, description, imageUrl, hex],
-    );
-    await client.query("COMMIT");
-    return result.rows[0];
-  } catch (err) {
-    await client.query("ROLLBACK");
-    throw new Error("Failed to create area");
-  } finally {
-    client.release();
-  }
+  const area = areaRepository.create({ name, description, imageUrl, hex });
+  return await areaRepository.save(area);
 };
 
 export const updateArea = async (
