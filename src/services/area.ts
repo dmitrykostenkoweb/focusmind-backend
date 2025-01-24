@@ -44,27 +44,38 @@ export const createAreaService = async (
   }
 };
 
-export const updateArea = async (
+export const updateAreaService = async (
   id: number,
   name: string,
   description?: string,
   imageUrl?: string,
   hex?: string,
-): Promise<Area> => {
-  const client: PoolClient = await pool.connect();
+): Promise<AreaEntity> => {
+  const queryRunner = AppDataSource.createQueryRunner();
+  await queryRunner.connect();
+  await queryRunner.startTransaction();
+
   try {
-    await client.query("BEGIN");
-    const result: QueryResult<Area> = await client.query(
-      "UPDATE Areas SET name = $1, description = $2, image_url = $3, hex = $4 WHERE ID = $5 RETURNING *",
-      [name, description, imageUrl, hex, id],
-    );
-    await client.query("COMMIT");
-    return result.rows[0];
-  } catch (err) {
-    await client.query("ROLLBACK");
-    throw err;
+    const area = await queryRunner.manager.findOneBy(AreaEntity, { id });
+
+    if (!area) {
+      throw new Error("Area not found.");
+    }
+
+    area.name = name;
+    area.description = description;
+    area.imageUrl = imageUrl;
+    area.hex = hex;
+
+    const updatedArea = await queryRunner.manager.save(area);
+    await queryRunner.commitTransaction();
+
+    return updatedArea;
+  } catch (error) {
+    await queryRunner.rollbackTransaction();
+    throw new Error("Failed to update area.");
   } finally {
-    client.release();
+    await queryRunner.release();
   }
 };
 

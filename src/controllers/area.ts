@@ -3,8 +3,8 @@ import {
   getAllAreasService,
   getAreaByIdService,
   createAreaService,
+  updateAreaService,
   deleteArea,
-  updateArea,
 } from "@/services/area";
 import { Area } from "@/models/area";
 import { handleDbError } from "@/utils";
@@ -77,26 +77,27 @@ export const updateAreaController = async (
 ): Promise<void> => {
   const { id } = req.params;
   const { name, description, imageUrl, hex } = req.body;
+
   try {
-    const updatedArea: Area = await updateArea(
+    if (!name) {
+      res.status(400).json({ error: "Name is required." });
+      return;
+    }
+
+    const updatedArea = await updateAreaService(
       Number(id),
       name,
       description,
       imageUrl,
       hex,
     );
-
-    // const updatedArea: Area = {
-    //   id: updatedArea.id,
-    //   name: updatedArea.name,
-    //   description: updatedArea.description,
-    //   imageUrl: updatedArea.imageUrl,
-    //   hex: updatedArea.hex,
-    // };
-
     res.json(updatedArea);
-  } catch (err) {
-    handleDbError(err, res);
+  } catch (error: unknown) {
+    let errorMessage = "Internal server error.";
+    if (error instanceof Error) {
+      errorMessage = error.message;
+    }
+    res.status(500).json({ error: errorMessage });
   }
 };
 
