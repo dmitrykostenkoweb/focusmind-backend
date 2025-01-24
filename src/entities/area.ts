@@ -21,8 +21,8 @@ export class AreaEntity {
   hex?: string;
 
   @OneToMany(() => ProjectEntity, (project) => project.area)
-  projects!: ProjectEntity[];
+  projects?: ProjectEntity[];
 
   @OneToMany(() => TaskEntity, (task) => task.area)
-  tasks!: TaskEntity[];
+  tasks?: TaskEntity[];
 }
