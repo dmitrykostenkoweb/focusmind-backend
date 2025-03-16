@@ -10,7 +10,7 @@ const projectRepository: Repository<ProjectEntity> =
 export const getAllProjectsService = async (): Promise<ProjectEntity[]> => {
   try {
     return await projectRepository.find({
-      select: ["id", "name", "status", "areaId"],
+      select: ["id", "name", "status", "areaId", "description", "imageUrl", "area"],
     });
   } catch (error) {
     throw new Error("Failed to fetch projects.");
