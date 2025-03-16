@@ -24,6 +24,7 @@ describe("Area Controller", () => {
           id: 1,
           name: "Area 1",
           description: "Description 1",
+          entityType: "area",
         },
       ];
       (getAllAreasService as jest.Mock).mockResolvedValue(mockAreas);
@@ -42,6 +43,7 @@ describe("Area Controller", () => {
         name: "Area 1",
         description: "Description 1",
         imageUrl: "ImageUrl 1",
+        entityType: "area",
       };
       (getAreaByIdService as jest.Mock).mockResolvedValue(mockArea);
 
@@ -68,6 +70,7 @@ describe("Area Controller", () => {
         name: "New Area",
         description: "New Description",
         imageUrl: "New ImageUrl",
+        entityType: "area",
       };
       (createAreaService as jest.Mock).mockResolvedValue(newArea);
 
@@ -99,6 +102,7 @@ describe("Area Controller", () => {
         name: "Updated Area",
         description: "Updated Description",
         imageUrl: "Updated ImageUrl",
+        entityType: "area",
       };
       (updateAreaService as jest.Mock).mockResolvedValue(updatedArea);
 

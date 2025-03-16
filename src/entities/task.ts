@@ -7,6 +7,9 @@ export class TaskEntity {
   @PrimaryGeneratedColumn()
   id!: number;
 
+  @Column({ length: 255 })
+  entityType!: "task";
+
   @Column()
   name!: string;
 

@@ -3,7 +3,6 @@ import { TaskEntity } from "@/entities/task";
 import { Repository } from "typeorm";
 import { Status } from "@/models/shared";
 import { ProjectEntity } from "@/entities/project";
-import { AreaEntity } from "@/entities/area";
 
 const taskRepository: Repository<TaskEntity> =
   AppDataSource.getRepository(TaskEntity);
@@ -58,7 +57,7 @@ export const createTaskService = async (
     if (!project) {
       throw new Error("Project not found.");
     }
-
+    const entityType = "task";
     const task = queryRunner.manager.create(TaskEntity, {
       name,
       projectId,
@@ -67,6 +66,7 @@ export const createTaskService = async (
       startDate,
       endDate,
       imageUrl,
+      entityType,
     });
 
     const savedTask = await queryRunner.manager.save(task);

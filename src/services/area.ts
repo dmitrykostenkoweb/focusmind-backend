@@ -27,10 +27,15 @@ export const createAreaService = async (
   name: string,
   description?: string,
   imageUrl?: string,
-  hex?: string,
 ): Promise<AreaEntity> => {
   try {
-    const area = areaRepository.create({ name, description, imageUrl, hex });
+    const entityType = "area";
+    const area = areaRepository.create({
+      name,
+      description,
+      imageUrl,
+      entityType,
+    });
     return await areaRepository.save(area);
   } catch (error: unknown) {
     if (error instanceof Error) {
@@ -48,7 +53,6 @@ export const updateAreaService = async (
   name: string,
   description?: string,
   imageUrl?: string,
-  hex?: string,
 ): Promise<AreaEntity> => {
   const queryRunner = AppDataSource.createQueryRunner();
   await queryRunner.connect();
@@ -64,7 +68,6 @@ export const updateAreaService = async (
     area.name = name;
     area.description = description;
     area.imageUrl = imageUrl;
-    area.hex = hex;
 
     const updatedArea = await queryRunner.manager.save(area);
     await queryRunner.commitTransaction();

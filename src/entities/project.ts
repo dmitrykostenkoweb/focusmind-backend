@@ -14,6 +14,9 @@ export class ProjectEntity {
   @PrimaryGeneratedColumn()
   id!: number;
 
+  @Column({ length: 255 })
+  entityType!: "project";
+
   @Column()
   name!: string;
 

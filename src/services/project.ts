@@ -10,7 +10,15 @@ const projectRepository: Repository<ProjectEntity> =
 export const getAllProjectsService = async (): Promise<ProjectEntity[]> => {
   try {
     return await projectRepository.find({
-      select: ["id", "name", "status", "areaId", "description", "imageUrl", "area"],
+      select: [
+        "id",
+        "name",
+        "status",
+        "areaId",
+        "description",
+        "imageUrl",
+        "area",
+      ],
     });
   } catch (error) {
     throw new Error("Failed to fetch projects.");
@@ -46,13 +54,14 @@ export const createProjectService = async (
     if (!area) {
       throw new Error("Area not found.");
     }
-
+    const entityType = "project";
     const project = queryRunner.manager.create(ProjectEntity, {
       name,
       areaId,
       status,
       description,
       imageUrl,
+      entityType,
     });
 
     const savedProject = await queryRunner.manager.save(project);

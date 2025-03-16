@@ -51,14 +51,14 @@ export const createAreaController = async (
   req: Request,
   res: Response,
 ): Promise<void> => {
-  const { name, description, imageUrl, hex } = req.body;
+  const { name, description, imageUrl } = req.body;
 
   if (!name) {
     res.status(400).json({ error: "Name is required." });
     return;
   }
   try {
-    const newArea = await createAreaService(name, description, imageUrl, hex);
+    const newArea = await createAreaService(name, description, imageUrl);
     res.status(201).json(newArea);
   } catch (error: unknown) {
     let errorMessage = "Internal server error.";
@@ -74,7 +74,7 @@ export const updateAreaController = async (
   res: Response,
 ): Promise<void> => {
   const { id } = req.params;
-  const { name, description, imageUrl, hex } = req.body;
+  const { name, description, imageUrl } = req.body;
 
   try {
     if (!name) {
@@ -87,7 +87,6 @@ export const updateAreaController = async (
       name,
       description,
       imageUrl,
-      hex,
     );
     res.json(updatedArea);
   } catch (error: unknown) {
