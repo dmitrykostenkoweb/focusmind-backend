@@ -10,11 +10,19 @@ import {
 import { Status } from "@/models/shared";
 
 export const getAllProjectsController = async (
-  _: Request,
+  req: Request,
   res: Response,
 ): Promise<void> => {
   try {
-    const projects = await getAllProjectsService();
+    const statusQuery = req.query.status;
+    let statuses: Status[] | undefined;
+
+    if (statusQuery) {
+      const statusValues = Array.isArray(statusQuery) ? statusQuery : [statusQuery];
+      statuses = statusValues.map(status => status as Status);
+    }
+
+    const projects = await getAllProjectsService(statuses);
     res.json(projects);
   } catch (error: unknown) {
     res.status(500).json({ error: "Internal server error." });
@@ -75,7 +83,7 @@ export const updateProjectController = async (
 
     if (!name || !areaId || !status) {
       res.status(400).json({ error: "Name, areaId, and status are required." });
-      return;
+      return; 
     }
 
     const updatedProject = await updateProjectService(

@@ -7,19 +7,26 @@ import { Status } from "@/models/shared";
 const projectRepository: Repository<ProjectEntity> =
   AppDataSource.getRepository(ProjectEntity);
 
-export const getAllProjectsService = async (): Promise<ProjectEntity[]> => {
+export const getAllProjectsService = async (statuses?: Status[]): Promise<ProjectEntity[]> => {
   try {
-    return await projectRepository.find({
-      select: [
-        "id",
-        "name",
-        "status",
-        "areaId",
-        "description",
-        "imageUrl",
-        "area",
-      ],
-    });
+    const queryBuilder = projectRepository.createQueryBuilder("project");
+    
+    if (statuses && statuses.length > 0) {
+      queryBuilder.where("project.status IN (:...statuses)", { statuses });
+    }
+
+    return await queryBuilder
+      .select([
+        "project.id",
+        "project.entityType",
+        "project.name",
+        "project.areaId",
+        "project.area",
+        "project.status",
+        "project.description",
+        "project.imageUrl",
+      ])
+      .getMany();
   } catch (error) {
     throw new Error("Failed to fetch projects.");
   }
