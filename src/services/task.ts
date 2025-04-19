@@ -7,20 +7,27 @@ import { ProjectEntity } from "@/entities/project";
 const taskRepository: Repository<TaskEntity> =
   AppDataSource.getRepository(TaskEntity);
 
-export const getAllTasksService = async (): Promise<TaskEntity[]> => {
+export const getAllTasksService = async (statuses?: Status[]): Promise<TaskEntity[]> => {
   try {
-    return await taskRepository.find({
-      select: [
-        "id",
-        "name",
-        "description",
-        "status",
-        "startDate",
-        "endDate",
-        "projectId",
-        "imageUrl",
-      ],
-    });
+    const queryBuilder = taskRepository.createQueryBuilder("task");
+    
+    if (statuses && statuses.length > 0) {
+      queryBuilder.where("task.status IN (:...statuses)", { statuses });
+    }
+
+    return await queryBuilder
+      .select([
+        "task.id",
+        "task.entityType",
+        "task.name",
+        "task.description",
+        "task.status",
+        "task.startDate",
+        "task.endDate",
+        "task.projectId",
+        "task.imageUrl",
+      ])
+      .getMany();
   } catch (error) {
     throw new Error("Failed to fetch tasks.");
   }
@@ -171,5 +178,3 @@ export const updateTaskStatusService = async (
     await queryRunner.release();
   }
 };
-
-//todo completeTask service

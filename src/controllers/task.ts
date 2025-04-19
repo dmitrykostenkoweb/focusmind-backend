@@ -10,11 +10,19 @@ import {
 import { Status } from "@/models/shared";
 
 export const getAllTasksController = async (
-  _: Request,
+  req: Request,
   res: Response,
 ): Promise<void> => {
   try {
-    const tasks = await getAllTasksService();
+    const statusQuery = req.query.status;
+    let statuses: Status[] | undefined;
+
+    if (statusQuery) {
+      const statusValues = Array.isArray(statusQuery) ? statusQuery : [statusQuery];
+      statuses = statusValues.map(status => status as Status);
+    }
+
+    const tasks = await getAllTasksService(statuses);
     res.json(tasks);
   } catch (error: unknown) {
     res.status(500).json({ error: "Internal server error." });
