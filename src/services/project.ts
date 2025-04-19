@@ -132,3 +132,31 @@ export const deleteProjectService = async (id: number): Promise<void> => {
     await queryRunner.release();
   }
 };
+
+export const updateProjectStatusService = async (
+  id: number,
+  status: Status,
+): Promise<ProjectEntity> => {
+  const queryRunner = AppDataSource.createQueryRunner();
+  await queryRunner.connect();
+  await queryRunner.startTransaction();
+
+  try {
+    const project = await queryRunner.manager.findOneBy(ProjectEntity, { id });
+
+    if (!project) {
+      throw new Error("Project not found.");
+    }
+
+    project.status = status;
+
+    const updatedProject = await queryRunner.manager.save(project);
+    await queryRunner.commitTransaction();
+    return updatedProject;
+  } catch (error) {
+    await queryRunner.rollbackTransaction();
+    throw new Error("Failed to update project status.");
+  } finally {
+    await queryRunner.release();
+  }
+};

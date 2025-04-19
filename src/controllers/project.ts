@@ -5,7 +5,9 @@ import {
   createProjectService,
   updateProjectService,
   deleteProjectService,
+  updateProjectStatusService,
 } from "@/services/project";
+import { Status } from "@/models/shared";
 
 export const getAllProjectsController = async (
   _: Request,
@@ -98,6 +100,32 @@ export const deleteProjectController = async (
     const { id } = req.params;
     await deleteProjectService(Number(id));
     res.json({ message: "Project deleted successfully" });
+  } catch (error: unknown) {
+    res.status(500).json({ error: "Internal server error." });
+  }
+};
+
+export const updateProjectStatusController = async (
+  req: Request,
+  res: Response,
+): Promise<void> => {
+  try {
+    const { id } = req.params;
+    const { status } = req.body;
+
+    if (!status) {
+      res.status(400).json({ error: "Status is required." });
+      return;
+    }
+
+    const updatedProject = await updateProjectStatusService(Number(id), status);
+
+    if (!updatedProject) {
+      res.status(404).json({ error: "Project not found." });
+      return;
+    }
+
+    res.json(updatedProject);
   } catch (error: unknown) {
     res.status(500).json({ error: "Internal server error." });
   }
