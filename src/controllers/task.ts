@@ -5,7 +5,9 @@ import {
   createTaskService,
   updateTaskService,
   deleteTaskService,
+  updateTaskStatusService,
 } from "@/services/task";
+import { Status } from "@/models/shared";
 
 export const getAllTasksController = async (
   _: Request,
@@ -131,6 +133,32 @@ export const deleteTaskController = async (
     }
 
     res.json({ message: "Task deleted successfully" });
+  } catch (error: unknown) {
+    res.status(500).json({ error: "Internal server error." });
+  }
+};
+
+export const updateTaskStatusController = async (
+  req: Request,
+  res: Response,
+): Promise<void> => {
+  try {
+    const { id } = req.params;
+    const { status } = req.body;
+
+    if (!status) {
+      res.status(400).json({ error: "Status is required." });
+      return;
+    }
+
+    const updatedTask = await updateTaskStatusService(Number(id), status);
+
+    if (!updatedTask) {
+      res.status(404).json({ error: "Task not found." });
+      return;
+    }
+
+    res.json(updatedTask);
   } catch (error: unknown) {
     res.status(500).json({ error: "Internal server error." });
   }

@@ -143,4 +143,33 @@ export const deleteTaskService = async (id: number): Promise<boolean> => {
     await queryRunner.release();
   }
 };
+
+export const updateTaskStatusService = async (
+  id: number,
+  status: Status,
+): Promise<TaskEntity> => {
+  const queryRunner = AppDataSource.createQueryRunner();
+  await queryRunner.connect();
+  await queryRunner.startTransaction();
+
+  try {
+    const task = await queryRunner.manager.findOneBy(TaskEntity, { id });
+
+    if (!task) {
+      throw new Error("Task not found.");
+    }
+
+    task.status = status;
+
+    const updatedTask = await queryRunner.manager.save(task);
+    await queryRunner.commitTransaction();
+    return updatedTask;
+  } catch (error) {
+    await queryRunner.rollbackTransaction();
+    throw new Error("Failed to update task status.");
+  } finally {
+    await queryRunner.release();
+  }
+};
+
 //todo completeTask service
