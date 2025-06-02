@@ -4,7 +4,7 @@ import { Express } from "express";
 
 import cors from "cors";
 import dotenv from "dotenv";
-//routes
+//ROUTES
 import area from "./routes/area";
 import project from "./routes/project";
 import task from "./routes/task";
